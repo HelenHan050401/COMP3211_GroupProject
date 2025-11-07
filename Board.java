@@ -57,21 +57,22 @@ public class Board {
         return Optional.ofNullable(grid[p.getRow()][p.getCol()]);
     }
 
-    public Terrain getTerrain(Position p) {
+    /* ====== 以下全部改为 static，供 GameRule 静态调用 ====== */
+    public static Terrain getTerrain(Board board, Position p) {
         if (!inBounds(p)) return null;
-        return terrain[p.getRow()][p.getCol()];
+        return board.terrain[p.getRow()][p.getCol()];
     }
 
-    public boolean isRiver(Position p) {
-        return getTerrain(p) == Terrain.RIVER;
+    public static boolean isRiver(Board board, Position p) {
+        return getTerrain(board, p) == Terrain.RIVER;
     }
 
-    public boolean isTrap(Position p, boolean red) {
-        return getTerrain(p) == (red ? Terrain.RED_TRAP : Terrain.BLUE_TRAP);
+    public static boolean isTrap(Board board, Position p, boolean red) {
+        return getTerrain(board, p) == (red ? Terrain.RED_TRAP : Terrain.BLUE_TRAP);
     }
 
-    public boolean isDen(Position p, boolean red) {
-        return getTerrain(p) == (red ? Terrain.RED_DEN : Terrain.BLUE_DEN);
+    public static boolean isDen(Board board, Position p, boolean red) {
+        return getTerrain(board, p) == (red ? Terrain.RED_DEN : Terrain.BLUE_DEN);
     }
 
     public static boolean inBounds(Position p) {
@@ -100,7 +101,7 @@ public class Board {
         if (opFrom.isEmpty()) return false;
         Piece attacker = opFrom.get();
         boolean red = attacker.isRed();
-        if (isDen(to, red)) return false;                 // 不能进己方兽穴
+        if (isDen(this, to, red)) return false;                 // 不能进己方兽穴
         Optional<Piece> opTo = getPiece(to);
         return opTo.isEmpty() || opTo.get().isRed() != red; // 不能吃同色
     }
@@ -113,10 +114,10 @@ public class Board {
                 Optional<Piece> op = getPiece(p);
                 if (op.isPresent()) {
                     Piece pc = op.get();
-                    String name = pc.getWeight().getName().substring(0, 1);
+                    String name = pc.getWeight().name().substring(0, 1);
                     System.out.print(pc.isRed() ? "[" + name + "]" : "<" + name + ">");
                 } else {
-                    System.out.print(switch (getTerrain(p)) {
+                    System.out.print(switch (getTerrain(this, p)) {
                         case RIVER -> "~~~";
                         case RED_TRAP -> "[阱]";
                         case BLUE_TRAP -> "<阱>";
