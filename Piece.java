@@ -8,16 +8,15 @@ package model;
 public class Piece {
     private final AnimalsWeight weight;
     private boolean isAlive;
-    private boolean isRed;
     private final Player owner; // indicate the owner of the piece
     private Position position; // current position
 
-    public Piece(AnimalsWeight weight, Player owner, Position startPoint, boolean isRed) {
+    public Piece(AnimalsWeight weight, Player owner, Position startPoint) {
         this.weight = weight;
         this.owner = owner;
         this.position = startPoint;
         this.isAlive = true;
-        this.isRed = true; // suppose red = P1
+
     }
 
     public AnimalsWeight getWeight() {
@@ -28,6 +27,10 @@ public class Piece {
         return isAlive;
     }
 
+    public void setAlive(boolean alive) {
+        isAlive = alive;
+    }
+
     public void moveTo(Position newPosition) {
         this.position = newPosition;
     }
@@ -35,11 +38,7 @@ public class Piece {
     public Player getOwner() {
         return owner;
     }
-
-    public boolean isRed() {
-        return isRed;
-    }
-
+    
     public Position getPosition() {
         return position;
     }
