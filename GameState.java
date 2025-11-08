@@ -1,18 +1,32 @@
 package model;
 
 import java.util.stream.Collectors;
+import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
 
-public class GameState {
+public class GameState implements Serializable {
     private final Board board;
     private Player currentPlayer;
     private boolean isGameOver;
     private Player winner;
+    private List<Move> moveHistory = new LinkedList<>();
+    private static final int MAX_UNDO_STEPS = 3;
+
 
     public GameState() {
         this.board = new Board();
         this.currentPlayer = Player.P1; // P1 starts first
         this.isGameOver = false;
         this.winner = null;
+    }
+    // method to reset the game
+    public void resetGame() {
+        this.board.initPieces();
+        this.currentPlayer = Player.P1;
+        this.isGameOver = false;
+        this.winner = null;
+        this.moveHistory.clear();
     }
 
     public Board getBoard() {
@@ -84,12 +98,14 @@ public class GameState {
             return false;
         }
 
-        // Execute the move
+        // Record state before move
         Position oldPos = piece.getPosition();
+        Piece capturedPiece = board.getPiecePositions().get(newPos);
+
+        // Execute the move
         board.getPiecePositions().remove(oldPos); // Remove from old position
 
         // Handle capture if new position has an opponent's piece
-        Piece capturedPiece = board.getPiecePositions().get(newPos);
         if (capturedPiece != null) {
             capturedPiece.setAlive(false);
             board.getPiecePositions().remove(newPos);
@@ -98,6 +114,12 @@ public class GameState {
         // Update the moving piece's position
         piece.moveTo(newPos);
         board.getPiecePositions().put(newPos, piece);
+
+        // Record the move
+        moveHistory.add(new Move(piece, oldPos, newPos, capturedPiece));
+        if (moveHistory.size() > MAX_UNDO_STEPS) {
+            moveHistory.remove(0);
+        }
 
         // Check if the game is over after the move
         checkGameOver();
@@ -108,5 +130,45 @@ public class GameState {
         }
 
         return true;
+    }
+    // method to undo a move
+    public boolean undoMove() {
+        if (moveHistory.isEmpty()) {
+            return false;
+        }
+
+        Move lastMove = moveHistory.remove(moveHistory.size() - 1);
+        Piece piece = lastMove.getPiece();
+        Position fromPos = lastMove.getFromPos();
+        Position toPos = lastMove.getToPos();
+        Piece capturedPiece = lastMove.getCapturedPiece();
+
+        // Move piece back to original position
+        board.getPiecePositions().remove(toPos);
+        piece.moveTo(fromPos);
+        board.getPiecePositions().put(fromPos, piece);
+
+        // Restore captured piece if any
+        if (capturedPiece != null) {
+            capturedPiece.setAlive(true);
+            board.getPiecePositions().put(toPos, capturedPiece);
+        }
+
+        // Switch turn back
+        switchTurn();
+
+        // Reset game over state
+        this.isGameOver = false;
+        this.winner = null;
+
+        return true;
+    }
+    // getter method
+    public List<Move> getMoveHistory() {
+        return moveHistory;
+    }
+
+    public void setGameOver(boolean gameOver) {
+        isGameOver = gameOver;
     }
 }

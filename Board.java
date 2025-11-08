@@ -1,9 +1,9 @@
 package model;
 
 import java.util.*;
+import java.io.Serializable;
 
-
-public class Board {
+public class Board implements Serializable {
 
     public static final int ROWS = 9;
     public static final int COLS = 7;
@@ -45,6 +45,7 @@ public class Board {
 
     /* ---------- Initialize pieces' position  ---------- */
     public void initPieces() {
+        piecePositions.clear();
         // red pieces (P1): from the smaller row number
         addPiece(AnimalsWeight.ELEPHANT, Player.P1, new Position(2, 6));
         addPiece(AnimalsWeight.LION, Player.P1, new Position(0, 0));

@@ -1,11 +1,12 @@
 package model;
 
+import java.io.Serializable;
 /*
  * 1. The properties of pieces
  * 2. The movements
  * 3. output toString
  * */
-public class Piece {
+public class Piece implements Serializable {
     private final AnimalsWeight weight;
     private boolean isAlive;
     private final Player owner; // indicate the owner of the piece
