@@ -114,7 +114,7 @@ public class GameController {
     // method: show command list
     private void showCommands() {
         gameView.printMessage("\nAvailable commands:");
-        gameView.printMessage("- [col row targetCol targetRow] - Make a move");
+        gameView.printMessage("- [row col targetRow targetCol] - Make a move");
         gameView.printMessage("- undo - Undo last move (max 3)");
         gameView.printMessage("- new - Start new game");
         gameView.printMessage("- save [filename] - Save game to .jungle file");
