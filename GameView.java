@@ -17,7 +17,7 @@ public class GameView {
         // Print column labels with space after coordinate
         System.out.print("  "); // Padding for row labels
         for (int col = 0; col < Board.COLS; col++) {
-            System.out.print(col + "  "); // Column label + space (e.g., "0  ", "1  ")
+            System.out.print(col + "    "); // Column label + space (e.g., "0  ", "1  ")
         }
         System.out.println();
 
@@ -29,8 +29,8 @@ public class GameView {
                 Position pos = new Position(row, col);
                 if (pieces.containsKey(pos)) {
                     Piece piece = pieces.get(pos);
-                    // Piece symbol (2 chars) + space (total 3 chars per cell)
-                    System.out.print(getPieceSymbol(piece) + " ");
+                    // Piece symbol (3 chars) + space (total 4 chars per cell)
+                    System.out.print(getPieceSymbol(piece) + "  ");
                 } else {
                     // Terrain symbol (1 char) + 2 spaces (total 3 chars per cell)
                     String terrainSymbol = getTerrainSymbol(terrain[row][col]);
@@ -64,15 +64,15 @@ public class GameView {
 
     private String getPieceSymbol(Piece piece) {
         String ownerPrefix = piece.getOwner() == model.Player.P1 ? "R" : "B";
-        return ownerPrefix + piece.getWeight().getName().substring(0, 1).toUpperCase();
+        return ownerPrefix + piece.getWeight().getName().substring(0, 2).toUpperCase();
     }
 
     private String getTerrainSymbol(Terrain terrain) {
         return switch (terrain) {
-            case RIVER -> "~";
-            case RED_TRAP, BLUE_TRAP -> "X";
-            case RED_DEN, BLUE_DEN -> "D";
-            default -> ".";
+            case RIVER -> "~~~";
+            case RED_TRAP, BLUE_TRAP -> "XXX";
+            case RED_DEN, BLUE_DEN -> "DDD";
+            default -> "...";
         };
     }
     // Display game messages
